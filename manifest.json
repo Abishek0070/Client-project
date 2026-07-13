@@ -9,6 +9,11 @@
   "theme_color": "#16336e",
   "orientation": "any",
   "icons": [
-    { "src": "abb.png", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "abb.png",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
