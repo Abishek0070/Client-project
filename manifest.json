@@ -1,0 +1,14 @@
+{
+  "name": "Sivalayas Travels Receipt",
+  "short_name": "Sivalayas Receipt",
+  "description": "Fill and share Sivalayas Travels receipts as PDF",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#dfe4ee",
+  "theme_color": "#16336e",
+  "orientation": "any",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

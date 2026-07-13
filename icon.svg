@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#16336e"/>
+  <rect x="96" y="120" width="320" height="272" rx="10" fill="#eef1f7" stroke="#ffffff" stroke-width="6"/>
+  <rect x="96" y="120" width="320" height="46" fill="none" stroke="#ffffff" stroke-width="6"/>
+  <text x="256" y="152" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">RECEIPT</text>
+  <line x1="130" y1="210" x2="382" y2="210" stroke="#16336e" stroke-width="8"/>
+  <line x1="130" y1="248" x2="382" y2="248" stroke="#16336e" stroke-width="8"/>
+  <line x1="130" y1="286" x2="330" y2="286" stroke="#16336e" stroke-width="8"/>
+  <line x1="130" y1="324" x2="360" y2="324" stroke="#16336e" stroke-width="8"/>
+  <circle cx="380" cy="355" r="46" fill="#e0592a"/>
+  <path d="M362 355 l12 12 24 -28" stroke="#ffffff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
