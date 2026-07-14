@@ -105,20 +105,31 @@
   .row.inline{display:flex;align-items:baseline;gap:6px;}
   .row.inline input{flex:1;}
 
-  .triprow{display:flex;}
+  .triprow{display:flex;flex-wrap:wrap;}
   .triprow .opt{
-    flex:1;
+    flex:1 1 50%;
+    min-width:0;
     padding:7px 10px;
     border-right:2px solid var(--navy);
+    border-bottom:2px solid var(--navy);
     display:flex;
     align-items:center;
     gap:6px;
     font-weight:600;
     cursor:pointer;
     user-select:none;
+    white-space:nowrap;
   }
-  .triprow .opt:last-child{border-right:none;}
+  .triprow .opt:nth-child(2n){border-right:none;}
+  .triprow .opt:nth-last-child(-n+2){border-bottom:none;}
   .triprow .opt input{width:15px;height:15px;flex:none;accent-color:var(--navy);}
+
+  @media (min-width:520px){
+    .triprow{flex-wrap:nowrap;}
+    .triprow .opt{flex:1 1 0;border-bottom:none;white-space:nowrap;}
+    .triprow .opt:nth-child(2n){border-right:2px solid var(--navy);}
+    .triprow .opt:last-child{border-right:none;}
+  }
 
   .row.tall textarea{min-height:34px;}
   .row.taller textarea{min-height:46px;}
@@ -186,7 +197,7 @@
         <p class="name">SIVALAYAS TRAVELS</p>
         <p class="addr">Samanna Nagar, Vellalore Road,</p>
         <p class="addr">Podanur, CBE-- 641-023</p>
-        <p class="addr">97900 56854, 97514 56854</p>
+        <p class="addr">97514 56854, 97900 56854</p>
       </div>
       <div class="dsno mid">
         <div class="cell">
