@@ -62,15 +62,6 @@
     overflow:hidden;
     font-size:clamp(10px, 2.6vw, 14px);
   }
-  .title-bar{
-    text-align:center;
-    padding:8px 0;
-    font-size:1.3em;
-    letter-spacing:4px;
-    font-weight:600;
-    border-bottom:2px solid var(--navy);
-    color:var(--navy);
-  }
   .top{
     display:grid;
     grid-template-columns: 63% 21% 16%;
@@ -102,9 +93,9 @@
   input:focus, textarea:focus{background:#fff9e8;}
   textarea{resize:none;}
 
-  .main{display:grid;grid-template-columns:63% 21% 16%;}
-  .col-left, .col-mid, .col-narrow{border-right:2px solid var(--navy);}
-  .col-narrow{border-right:none;}
+  .main{display:grid;grid-template-columns:63% 37%;}
+  .col-left, .col-mid{border-right:2px solid var(--navy);}
+  .col-mid{border-right:none;}
   .row{
     border-bottom:2px solid var(--navy);
     padding:7px 12px;
@@ -132,11 +123,7 @@
   .row.tall textarea{min-height:34px;}
   .row.taller textarea{min-height:46px;}
 
-  .sign-row{display:flex;border-top:2px solid var(--navy);}
-  .sign-row .sign{flex:1;padding:10px 12px;border-right:2px solid var(--navy);}
-  .sign-row .sign:last-child{border-right:none;}
-
-  .col-mid .row, .col-narrow .row{padding:6px 10px;}
+  .col-mid .row{padding:6px 10px;}
 
   /* ---- Controls (outside the sheet) ---- */
   .controls{
@@ -193,14 +180,13 @@
 
 <div class="wrap">
   <div class="sheet" id="sheet">
-    <div class="title-bar">RECEIPT</div>
 
     <div class="top">
       <div class="company">
         <p class="name">SIVALAYAS TRAVELS</p>
         <p class="addr">Samanna Nagar, Vellalore Road,</p>
         <p class="addr">Podanur, CBE-- 641-023</p>
-        <p class="addr">97514 56854, 98949 66225</p>
+        <p class="addr">97900 56854, 97514 56854</p>
       </div>
       <div class="dsno mid">
         <div class="cell">
@@ -217,6 +203,10 @@
           <label class="field-label">S. No</label>
           <input type="text" id="f_sno">
         </div>
+        <div class="cell">
+          <label class="field-label">Drop</label>
+          <input type="text" id="f_droptime" placeholder="e.g. 8:00 PM">
+        </div>
       </div>
     </div>
 
@@ -229,6 +219,7 @@
           <label class="opt"><input type="checkbox" id="f_pickup"> Pick Up</label>
           <label class="opt"><input type="checkbox" id="f_drop"> Drop</label>
           <label class="opt"><input type="checkbox" id="f_round"> Round Trip</label>
+          <label class="opt"><input type="checkbox" id="f_rental"> Rental</label>
         </div>
         <div class="row tall">
           <label class="field-label">FROM:</label>
@@ -244,7 +235,7 @@
         <div class="row inline"><label class="field-label">Licence/Badge Number:</label><input id="f_licence"></div>
       </div>
 
-      <!-- MID COLUMN -->
+      <!-- MID/RIGHT COLUMN -->
       <div class="col-mid">
         <div class="row inline"><label class="field-label">Opening KM</label><input id="f_openkm" inputmode="numeric"></div>
         <div class="row inline"><label class="field-label">Closing KM</label><input id="f_closekm" inputmode="numeric"></div>
@@ -255,22 +246,9 @@
         <div class="row inline"><label class="field-label">Parking:</label><input id="f_parking" inputmode="decimal"></div>
         <div class="row inline"><label class="field-label">Permit:</label><input id="f_permit" inputmode="decimal"></div>
         <div class="row inline"><label class="field-label">Total Amount</label><input id="f_totalamt" inputmode="decimal"></div>
-        <div class="row inline"><label class="field-label">Driver Signature</label><input id="f_driversign"></div>
-      </div>
-
-      <!-- NARROW COLUMN (kept blank, matches template) -->
-      <div class="col-narrow">
-        <div class="row">&nbsp;</div>
       </div>
     </div>
 
-    <div class="sign-row">
-      <div class="sign">
-        <label class="field-label">Customer Signature</label>
-        <input id="f_custsign">
-      </div>
-      <div class="sign">&nbsp;</div>
-    </div>
   </div>
 </div>
 

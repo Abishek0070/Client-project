@@ -1,13 +1,12 @@
 // ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
 const FIELD_IDS = [
-  'f_date','f_pickuptime','f_sno','f_custname','f_contact',
-  'f_pickup','f_drop','f_round','f_from','f_to','f_days','f_vehicle',
+  'f_date','f_pickuptime','f_droptime','f_sno','f_custname','f_contact',
+  'f_pickup','f_drop','f_round','f_rental','f_from','f_to','f_days','f_vehicle',
   'f_drivername','f_licence','f_openkm','f_closekm','f_totalkm',
-  'f_amount','f_waiting','f_toll','f_parking','f_permit','f_totalamt',
-  'f_driversign','f_custsign'
+  'f_amount','f_waiting','f_toll','f_parking','f_permit','f_totalamt'
 ];
-const CHECKBOX_IDS = ['f_pickup','f_drop','f_round'];
+const CHECKBOX_IDS = ['f_pickup','f_drop','f_round','f_rental'];
 
 function todayStr(){
   const d = new Date();
@@ -103,28 +102,24 @@ function buildPdf(){
   doc.setLineWidth(0.6);
   doc.rect(x0,y0,x1-x0,y1-y0);
 
-  // Title bar
-  const titleH = 12;
-  doc.line(x0, y0+titleH, x1, y0+titleH);
-  doc.setTextColor(...NAVY);
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(15);
-  doc.text('RECEIPT', W/2, y0+titleH/2+3, {align:'center'});
-
-  // Column boundaries (left / mid / narrow)
+  // Column boundaries (left / right)
   const leftW = (x1-x0) * 0.63;
   const midW = (x1-x0) * 0.21;
   const xLeft = x0, xMid = x0+leftW, xNarrow = xMid+midW;
-  doc.line(xMid, y0+titleH, xMid, y1);
-  doc.line(xNarrow, y0+titleH, xNarrow, y1);
+  doc.line(xMid, y0, xMid, y1);
+  // xNarrow is only used inside the top block (to separate S.No/Drop from Date/Pickup);
+  // in the body it merges with the mid column so there's no empty strip.
 
-  // Top block (company + date/pickup + s.no)
+  // Top block (company + date/pickup + s.no/drop)
   const topH = 30;
-  const yTop0 = y0+titleH, yTop1 = yTop0+topH;
-  doc.line(x0, yTop1, xNarrow, yTop1); // bottom of top block (left+mid); narrow column handled separately
+  const yTop0 = y0, yTop1 = yTop0+topH;
+  doc.line(x0, yTop1, x1, yTop1);
+  doc.line(xNarrow, yTop0, xNarrow, yTop1);
 
   // Company text
+  doc.setFont('helvetica','bold');
   doc.setFontSize(15);
+  doc.setTextColor(...NAVY);
   doc.text('SIVALAYAS TRAVELS', xLeft+5, yTop0+9);
   doc.setFontSize(9.5);
   doc.text('Samanna Nagar, Vellalore Road,', xLeft+5, yTop0+15);
@@ -137,12 +132,10 @@ function buildPdf(){
   labelValue(doc, 'Date', formatDateDisplay($('f_date').value), xMid+3, yTop0+2, xMid+3, yTop0+8);
   labelValue(doc, 'Pickup', $('f_pickuptime').value, xMid+3, yTop0+midRowH+2, xMid+3, yTop0+midRowH+8);
 
-  // S.No / Opening,Return narrow cells
+  // S.No / Drop narrow cells (parallel to Date / Pickup)
   doc.line(xNarrow, yTop0+midRowH, x1, yTop0+midRowH);
   labelValue(doc, 'S. No', $('f_sno').value, xNarrow+3, yTop0+2, xNarrow+3, yTop0+8);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(8);
-  doc.text('Opening, Return', xNarrow+3, yTop0+midRowH+6);
+  labelValue(doc, 'Drop', $('f_droptime').value, xNarrow+3, yTop0+midRowH+2, xNarrow+3, yTop0+midRowH+8);
 
   // ---- LEFT column rows ----
   let ly = yTop1;
@@ -150,17 +143,16 @@ function buildPdf(){
     {h:8, draw:(y)=> labelValue(doc,'Customer Name:', $('f_custname').value, xLeft+3, y+1.5, xLeft+34, y+5.5, true)},
     {h:8, draw:(y)=> labelValue(doc,'Contact Number:', $('f_contact').value, xLeft+3, y+1.5, xLeft+34, y+5.5, true)},
     {h:8, draw:(y)=> tripRow(y)},
-    {h:16, draw:(y)=> { doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text('FROM:', xLeft+3, y+5);
+    {h:20, draw:(y)=> { doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text('FROM:', xLeft+3, y+5);
       doc.setFont('helvetica','normal'); doc.setFontSize(9);
       wrapText(doc, $('f_from').value, xLeft+3, y+10, leftW-8, 4); } },
-    {h:12, draw:(y)=> { doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text('TO:', xLeft+3, y+5);
+    {h:14, draw:(y)=> { doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text('TO:', xLeft+3, y+5);
       doc.setFont('helvetica','normal'); doc.setFontSize(9);
       wrapText(doc, $('f_to').value, xLeft+3, y+9.5, leftW-8, 3.5); } },
-    {h:7, draw:(y)=> labelValue(doc,'No. of days:', $('f_days').value, xLeft+3, y+1.3, xLeft+28, y+5, true)},
-    {h:7, draw:(y)=> labelValue(doc,'Vehicle Reg No:', $('f_vehicle').value, xLeft+3, y+1.3, xLeft+34, y+5, true)},
-    {h:7, draw:(y)=> labelValue(doc,'Driver Name:', $('f_drivername').value, xLeft+3, y+1.3, xLeft+30, y+5, true)},
-    {h:7, draw:(y)=> labelValue(doc,'Licence/Badge Number:', $('f_licence').value, xLeft+3, y+1.3, xLeft+45, y+5, true)},
-    {h:12, draw:(y)=> labelValue(doc,'Customer Signature', $('f_custsign').value, xLeft+3, y+3, xLeft+3, y+9)},
+    {h:8, draw:(y)=> labelValue(doc,'No. of days:', $('f_days').value, xLeft+3, y+1.3, xLeft+28, y+5, true)},
+    {h:8, draw:(y)=> labelValue(doc,'Vehicle Reg No:', $('f_vehicle').value, xLeft+3, y+1.3, xLeft+34, y+5, true)},
+    {h:8, draw:(y)=> labelValue(doc,'Driver Name:', $('f_drivername').value, xLeft+3, y+1.3, xLeft+30, y+5, true)},
+    {h:8, draw:(y)=> labelValue(doc,'Licence/Badge Number:', $('f_licence').value, xLeft+3, y+1.3, xLeft+45, y+5, true)},
   ];
   leftRows.forEach(r=>{
     doc.line(xLeft, ly, xMid, ly);
@@ -175,6 +167,7 @@ function buildPdf(){
       {label:'Pick Up', on: $('f_pickup').checked},
       {label:'Drop', on: $('f_drop').checked},
       {label:'Round Trip', on: $('f_round').checked},
+      {label:'Rental', on: $('f_rental').checked},
     ];
     let bx = xLeft+3;
     boxes.forEach(b=>{
@@ -187,36 +180,35 @@ function buildPdf(){
       doc.setFont('helvetica','normal');
       doc.setFontSize(9);
       doc.text(b.label, bx+4.5, y+4.2);
-      bx += 4.5 + doc.getTextWidth(b.label) + 8;
+      bx += 4.5 + doc.getTextWidth(b.label) + 6;
     });
   }
 
-  // ---- MID column rows ----
+  // ---- RIGHT column rows (mid + former narrow column merged, no empty strip) ----
   let my = yTop1;
+  const rightW = x1 - xMid;
   const midRows = [
-    {h:9, label:'Opening KM', val:$('f_openkm').value},
-    {h:9, label:'Closing KM', val:$('f_closekm').value},
-    {h:9, label:'Total KM', val:$('f_totalkm').value},
-    {h:9, label:'Amount', val:$('f_amount').value},
-    {h:9, label:'Waiting Time', val:$('f_waiting').value},
-    {h:9, label:'Toll Gate:', val:$('f_toll').value},
-    {h:9, label:'Parking:', val:$('f_parking').value},
-    {h:9, label:'Permit:', val:$('f_permit').value},
-    {h:10, label:'Total Amount', val:$('f_totalamt').value},
-    {h:12, label:'Driver Signature', val:$('f_driversign').value},
+    {label:'Opening KM', val:$('f_openkm').value},
+    {label:'Closing KM', val:$('f_closekm').value},
+    {label:'Total KM', val:$('f_totalkm').value},
+    {label:'Amount', val:$('f_amount').value},
+    {label:'Waiting Time', val:$('f_waiting').value},
+    {label:'Toll Gate:', val:$('f_toll').value},
+    {label:'Parking:', val:$('f_parking').value},
+    {label:'Permit:', val:$('f_permit').value},
+    {label:'Total Amount', val:$('f_totalamt').value},
   ];
+  const rowH = (y1 - yTop1) / midRows.length;
   midRows.forEach(r=>{
-    doc.line(xMid, my, xNarrow, my);
+    doc.line(xMid, my, x1, my);
     doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
     doc.text(r.label, xMid+3, my+4);
     doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    doc.text(String(r.val||''), xMid+3, my+r.h-2);
-    my += r.h;
+    doc.text(String(r.val||''), xMid+3, my+rowH-2);
+    my += rowH;
   });
-  doc.line(xMid, my, xNarrow, my);
-  if(my < y1) doc.line(xMid, y1, xNarrow, y1);
-
-  // Narrow column border already drawn full-height; nothing else to add.
+  doc.line(xMid, my, x1, my);
+  void rightW;
 
   doc.save(`Sivalayas_Receipt_${$('f_sno').value || 'draft'}.pdf`);
   return doc;
@@ -271,9 +263,6 @@ window.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function buildPdfBlobOnly(){
-    // same as buildPdf but without triggering save()
-    const original = buildPdf;
-    // simplest: reuse buildPdf's logic by temporarily overriding save — instead just rebuild doc without save call
     return buildPdfNoSave();
   }
 
